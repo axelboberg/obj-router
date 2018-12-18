@@ -1,0 +1,24 @@
+{
+  "name": "ssr-router",
+  "version": "1.0.0",
+  "description": "A quick router for both internal and external use, perfect for SSR",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "ssr",
+    "router"
+  ],
+  "author": "Axel Boberg",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^23.6.0"
+  },
+  "dependencies": {
+    "query-string": "^6.2.0"
+  }
+}
