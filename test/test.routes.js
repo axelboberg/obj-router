@@ -7,7 +7,7 @@ module.exports = {
       'get': req => { return Promise.resolve('Hello World') }
     },
     ':baz': {
-      'get': req => { return Promise.resolve(req.params[':baz']) }
+      'get': req => { return Promise.resolve(req.params.baz) }
     }
   },
   '/error': {
