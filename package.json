@@ -1,7 +1,7 @@
 {
-  "name": "ssr-router",
+  "name": "obj-router",
   "version": "1.0.0",
-  "description": "A quick router for both internal and external use, perfect for SSR",
+  "description": "A lightweight router based on objects for NodeJS Promises. For small web services.",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -10,11 +10,12 @@
     "test": "jest"
   },
   "keywords": [
-    "ssr",
-    "router"
+    "router",
+    "promise",
+    "object"
   ],
   "author": "Axel Boberg",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "jest": "^23.6.0"
   },
