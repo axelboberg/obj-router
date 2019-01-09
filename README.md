@@ -82,8 +82,8 @@ Resolvers are always executed synchronously in order until an object is returned
 A resolver should have the following signature:
 
 ```javascript
-  function resolver (key, routes, req) {
-    // `key` is the current string of the path being resolved
+  function resolver (path, routes, req) {
+    // `path` represents the path that's left to resolve as an array of strings, path[0] is the current key
     // `routes` is the current level of routes from the route object
     // `req` contains payload data for the endpoint
 
