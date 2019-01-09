@@ -14,5 +14,8 @@ module.exports = {
     '/500': {
       'get': false
     }
+  },
+  '/req': {
+    'get': req => { return Promise.resolve(req) }
   }
 }
