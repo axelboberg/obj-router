@@ -1,4 +1,4 @@
-const { validate, ensure } = require('../lib/validation')
+const { validate, ensure } = require('../lib/objects/validation')
 const rules = {
   'name': { required: true, type: 'string', default: 'John' },
   'interest': { required: false, default: 'ice skating', allowed: ['dancing', 'ice skating', 'skateboarding'] }

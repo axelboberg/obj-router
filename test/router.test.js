@@ -1,22 +1,28 @@
-const Router = require('../lib/router')
-const ResponseError = require('../lib/error/response')
-const routes = {
-  '/foo': {
-    ':bar': {
-      '/baz': {
-        'faz': 'Hello World'
-      }
-    }
-  }
-}
+const Router = require('../index')
+const HTTPError = require('../lib/error/http')
+const routes = require('./test.routes')
+
 const router = new Router(routes)
 
 test('resolve a route successfully', () => {
-  expect.assertions(1)
-  expect(router.resolve('/foo/bar/baz')).resolves.toEqual({'faz': 'Hello World'})
+  expect(router.resolve('/api/foo')).toBe('baz')
 })
 
-test('resolve a route with error 404', () => {
-  expect.assertions(1)
-  expect(router.resolve('/404')).rejects.toEqual(new ResponseError(404))
+test('execute a route successfully', async () => {
+  await expect(router.execute('/api/bar')).resolves.toBe('Hello World')
+})
+
+test('execute a route with a path parameter successfully', async () => {
+  await expect(router.execute('/api/parameter')).resolves.toBe('parameter')
+})
+
+test('execute a failing route (404)', async () => {
+  await expect(router.execute('/error/404')).rejects.toEqual(new HTTPError(404))
+})
+
+test('execute a failing route (500)', async () => {
+  /**
+   * TODO: Test succeeds regardless of error code
+   */
+  await expect(router.execute('/error/500')).rejects.toEqual(new HTTPError(500))
 })
