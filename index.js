@@ -66,6 +66,7 @@ function resolve (path, obj, resolvers, payload = {}) {
   if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
     throw new TypeError('Invalid object')
   }
+  const mutablePath = [].concat(path)
 
   /**
    * Loop through each key of the path
@@ -73,11 +74,10 @@ function resolve (path, obj, resolvers, payload = {}) {
    * is found
    */
   for (let i = 0, len = path.length; i < len; i++) {
-    const key = path[i]
     let next
 
     for (let resolver of resolvers) {
-      const res = resolver(key, obj, payload)
+      const res = resolver(mutablePath, obj, payload)
       if (!res) continue
 
       next = res
@@ -88,6 +88,12 @@ function resolve (path, obj, resolvers, payload = {}) {
     if (typeof next !== 'object' && i < len - 1) return null // 500
 
     obj = next
+
+    /**
+     * Keep the mutable path to the
+     * current and upcoming keys
+     */
+    mutablePath.shift()
   }
 
   return obj
