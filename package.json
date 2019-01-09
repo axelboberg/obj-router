@@ -1,14 +1,14 @@
 {
   "name": "obj-router",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight router based on objects for NodeJS Promises. For small web services.",
   "main": "index.js",
   "directories": {
     "lib": "lib"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/axelboberg/obj-router.git"
+    "type": "git",
+    "url": "https://github.com/axelboberg/obj-router.git"
   },
   "scripts": {
     "test": "jest"
