@@ -12,6 +12,9 @@ module.exports = {
     ':param': {
       'get': req => { return Promise.resolve(req.params.param) }
     },
+    '/query': {
+      'get': req => { return Promise.resolve(req.query.query) }
+    },
     'get': req => { return Promise.resolve('Prioritized') }
   },
   '/error': {

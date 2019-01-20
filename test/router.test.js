@@ -4,12 +4,20 @@ const routes = require('./test.routes')
 
 const router = new Router(routes)
 
-test('execute a route successfully', async () => {
+test('execute a route', async () => {
   await expect(router.execute('/api/foo')).resolves.toBe('First get')
 })
 
-test('execute a route with a path parameter successfully', async () => {
+test('execute a route with trailing slash', async () => {
+  await expect(router.execute('/api/foo/')).resolves.toBe('First get')
+})
+
+test('execute a route with a path parameter', async () => {
   await expect(router.execute('/api/parameter')).resolves.toBe('parameter')
+})
+
+test('execute a path with query parameters', async () => {
+  await expect(router.execute('/api/query/?query=parameter')).resolves.toBe('parameter')
 })
 
 test('prioritize methods', async () => {
