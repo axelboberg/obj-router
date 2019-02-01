@@ -1,6 +1,6 @@
 {
   "name": "obj-router",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A lightweight router based on objects for NodeJS Promises. For small web services.",
   "main": "index.js",
   "directories": {
