@@ -44,7 +44,18 @@ Parameters starts with `:` and can be accessed in `req.params`
 
 #### `method`
 
-Each endpoint should be a key-value pair of a method name and a function returning the desired value. The module comes pre-loaded with standard HTTP-methods but can be expanded with the use of resolvers.
+Each endpoint should be a key-value pair of a method name and a function returning the desired value. The resolver comes pre-loaded with standard HTTP-methods but can be expanded with the use of custom resolvers.
+
+The following methods will be resolved:
+
+```
+  get
+  head
+  post
+  put
+  delete
+  patch
+```
 
 ---
 
