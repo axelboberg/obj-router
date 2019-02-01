@@ -15,7 +15,10 @@ module.exports = {
     '/query': {
       'get': req => { return Promise.resolve(req.query.query) }
     },
-    'get': req => { return Promise.resolve('Prioritized') }
+    'get': req => { return Promise.resolve('Prioritized') },
+    '/methods': {
+      'patch': req => { return Promise.resolve('patch') }
+    }
   },
   '/error': {
     '/500': {
