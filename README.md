@@ -74,7 +74,7 @@ The `req` object is used throughout the router and acts as a payload for the end
 
 ```javascript
 {
-  method: String // any of ['get', 'post', 'put', 'delete'], defaults to 'get'
+  method: String // any of ['get', 'head', 'post', 'put', 'delete', 'patch'], defaults to 'get'
 
   // The following keys are read-only
   path: [String] // an array of keys representing the path being resolved
