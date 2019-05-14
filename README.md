@@ -69,11 +69,11 @@ The following methods will be resolved:
 
 ### `new Router(routes)`
 
-### `.execute(path, req?)`
-Execute a path, such as `/api/hello/world`, will return a promise
+### `.execute(path, req?, ...args?)`
+Execute a path, returns a promise
 
 ### `.resolve(path, req?)`
-Resolve a path, returns the endpoint-function or null
+Resolve a path, returns null or a value
 
 ---
 

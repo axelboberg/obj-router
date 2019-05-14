@@ -11,3 +11,6 @@ test('execute a route with trailing slash', async () => {
   await expect(router.execute('/api/foo/')).resolves.toBe('First get')
 })
 
+test('execute a route with additional arguments', async () => {
+  await expect(router.execute('/args', {}, 'My additional value')).resolves.toBe('My additional value')
+})

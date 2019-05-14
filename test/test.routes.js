@@ -28,6 +28,10 @@ module.exports = {
   '/req': {
     'get': req => { return Promise.resolve(req) }
   },
+
+  /**
+   * Wildcards
+   */
   '*': {
     'get': req => { return Promise.resolve('This is a wildcard') }
   },
@@ -35,5 +39,12 @@ module.exports = {
     '*': {
       'get': req => { return Promise.resolve('This is a nested wildcard') }
     }
+  },
+
+  /**
+   * Additional arguments
+   */
+  '/args': {
+    'get': (req, myVal) => { return Promise.resolve(myVal) }
   }
 }

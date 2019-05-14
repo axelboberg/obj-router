@@ -53,11 +53,11 @@ module.exports = function (routes) {
   /**
    * Execute a route with a request object as payload
    */
-  this.execute = function (pathname, req) {
+  this.execute = function (pathname, req, ...args) {
     req = createPayload(pathname, req)
 
     const endpoint = resolve(_routes, req.searchPath, { resolvers: _resolvers, req: req })
-    return execute(endpoint, req)
+    return execute(endpoint, req, ...args)
   }
 
   /**
@@ -116,9 +116,10 @@ function resolve (obj, path, opts = {}) {
 /**
  * Execute an endpoint
  * @param { Function? } endpoint
- * @param { Object? } payload
+ * @param { Object? } req
+ * @param { Array<Any?>? } args Additional arguments to pass to the endpoint
  */
-function execute (endpoint, req = {}) {
+function execute (endpoint, req = {}, ...args) {
   return new Promise (resolve => {
     // 404
     if (endpoint === null) {
@@ -130,6 +131,6 @@ function execute (endpoint, req = {}) {
       throw new HTTPError(500)
     }
 
-    resolve(endpoint(req))
+    resolve(endpoint(req, ...args))
   })
 }
