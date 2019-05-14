@@ -45,29 +45,37 @@ module.exports = function (routes) {
   /**
    * Resolve a path with payload
    */
-  this.resolve = function (pathname, payload) {
-    payload = createPayload(pathname, payload)
-    return resolve(_routes, payload.searchPath, { resolvers: _resolvers })
+  this.resolve = function (path, req = {}) {
+   req = createPayload(path, req)
+    return resolve(_routes, req.searchPath, { resolvers: _resolvers, req: req })
   }
 
   /**
    * Execute a route with a request object as payload
    */
-  this.execute = function (pathname, req, ...args) {
-    req = createPayload(pathname, req)
-
-    const endpoint = resolve(_routes, req.searchPath, { resolvers: _resolvers, req: req })
+  this.execute = function (path, req = { method: 'GET' }, ...args) {
+    const endpoint = this.resolve(path, req)
     return execute(endpoint, req, ...args)
   }
 
   /**
    * Add a resolver to the front of the stack
    */
-  this.addResolver = function (resolver) {
+  this.addResolverBefore = function (resolver) {
     if (typeof resolver !== 'function') {
       throw new TypeError('Resolver needs to be a function')
     }
     _resolvers.unshift(resolver)
+  }
+
+  /**
+   * Add a resolver to the back of the stack
+   */
+  this.addResolverAfter = function (resolver) {
+    if (typeof resolver !== 'function') {
+      throw new TypeError('Resolver needs to be a function')
+    }
+    _resolvers.push(resolver)
   }
 }
 
