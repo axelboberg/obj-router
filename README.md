@@ -2,7 +2,7 @@
 A lightweight router based on objects for NodeJS Promises. For small web services.
 
 ## Note  
-**This updates contains breaking changes**
+**This update contains breaking changes**
 
 ## Example
 
