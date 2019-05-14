@@ -1,6 +1,9 @@
 # obj-router
 A lightweight router based on objects for NodeJS Promises. For small web services.
 
+## Note  
+**This updates contains breaking changes**
+
 ## Example
 
 ```javascript
@@ -41,6 +44,11 @@ Regular paths are marked with `/`.
 #### `:param`
 
 Parameters starts with `:` and can be accessed in `req.params`
+
+#### `*` (Wildcard)  
+
+Catches all requests.  
+Can be a subpath but can only have direct children that are methods.
 
 #### `method`
 
@@ -93,19 +101,19 @@ Resolvers are always executed synchronously in order until an object is returned
 A resolver should have the following signature:
 
 ```javascript
-  function resolver (path, routes, req) {
-    // `path` represents the path that's left to resolve as an array of strings, path[0] is the current key
-    // `routes` is the current level of routes from the route object
-    // `req` contains payload data for the endpoint
+  function resolver (obj, path, opts, resolve)  {
+    // `obj` is the object to be resolved
+    // `path` represents the path to resolve as an array of strings, path[0] is the key currently being resolved
+    // `resolve` is a callback function that takes the resolved object as its first argument, a path as its second and options as its third. If this function isn't called the next resolver will be called with the same arguments.
+    // `opts` contains payload data for the operation. opts.req represents the request object.
 
-    // return object || null
+    // Must call resolve with at least its first argument
+    // if route is to be resolved by this resolver
+    // resolve(obj, path, opts)
   }
 ```
 
-#### `.addResolverBefore(resolver)`
-Prepends a resolver to be executed before the defaults
-
-#### `.addResolverAfter(resolver)`
-Appends a resolver to be executed after the defaults
+#### `.addResolver(resolver)`
+Prepends a resolver to the stack of resolvers
 
 ## [License](LICENSE)
