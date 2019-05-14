@@ -61,25 +61,13 @@ module.exports = function (routes) {
   }
 
   /**
-   * Add a resolver to the stack
-   * before the default ones
+   * Add a resolver to the front of the stack
    */
-  this.addResolverBefore = function (resolver) {
+  this.addResolver = function (resolver) {
     if (typeof resolver !== 'function') {
       throw new TypeError('Resolver needs to be a function')
     }
     _resolvers.unshift(resolver)
-  }
-
-  /**
-   * Add a resolver to the stack
-   * after the default ones
-   */
-  this.addResolverAfter = function (resolver) {
-    if (typeof resolver !== 'function') {
-      throw new TypeError('Resolver needs to be a function')
-    }
-    _resolvers.push(resolver)
   }
 }
 
@@ -110,13 +98,15 @@ function resolve (obj, path, opts = {}) {
   if (path.length === 0) return obj
 
   let resolved
-  const _resolve = val => {
+  const _resolve = (...args) => {
     path.shift()
-    resolved = resolve(val, path, opts)
+
+    const [ _obj, _path, _opts ] = args
+    resolved = resolve(_obj, _path || path, _opts || opts)
   }
 
   for (let resolver of opts.resolvers) {
-    resolver(obj, path, _resolve, opts)
+    resolver(obj, path, opts, _resolve)
     if (resolved) break
   }
 
