@@ -113,7 +113,10 @@ A resolver should have the following signature:
   }
 ```
 
-#### `.addResolver(resolver)`
+#### `.addResolverBefore(resolver)`
 Prepends a resolver to the stack of resolvers
+
+#### `.addResolverAfter(resolver)`
+Appends a resolver to the stack of resolvers
 
 ## [License](LICENSE)
