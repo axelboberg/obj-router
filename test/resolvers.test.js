@@ -4,22 +4,23 @@ const routes = require('./test.routes')
 const router = new Router(routes)
 
 test('prepend resolver', async () => {
-  router.addResolverBefore((key, obj, req) => {
-    req.before = true
+  router.addResolverBefore((obj, path, resolve, opts) => {
+    if (!opts.req) opts.req = {}
+    opts.req.before = true
   })
   await expect(router.execute('/req')).resolves.toHaveProperty('before', true)
 })
 
 test('append resolver', async () => {
-  router.addResolverAfter((key, obj, req) => {
+  router.addResolverAfter((obj, path, resolve, opts) => {
 
     /**
      * Resolve to a hijacked object
      * resolver a get handler
      */
-    return {
+    resolve ({
       'get': req => { return Promise.resolve('hijack') }
-    }
+    })
   })
 
   /**

@@ -8,36 +8,62 @@ const objects = require('./lib/objects')
 const url = require('./lib/url')
 const resolvers = require('./lib/resolvers')
 
+function defaults (target, definition) {
+  const mirror = Object.assign({}, definition)
+  return Object.assign(mirror, target)
+}
+
 module.exports = function (routes) {
   if (typeof routes !== 'object' || Array.isArray(routes)) {
     throw new TypeError('Routes must be a non-array object')
   }
 
   let _routes = routes
+
+  /**
+   * Make copy of resolvers in order
+   * to be able to add custom ones
+   * without modifying the original
+   * array
+   */
   let _resolvers = [].concat(resolvers)
 
+  /**
+   * Helper to populate a payload
+   * object for a path
+   */
   function createPayload (path, payload = {}) {
     payload = objects.payload.ensure(payload)
+
     const info = url.info(path)
     Object.assign(payload, info)
 
-    payload.searchPath = payload.path.concat([payload.method])
-
+    payload.searchPath = payload.path.concat([ payload.method ])
     return payload
   }
 
+  /**
+   * Resolve a path with payload
+   */
   this.resolve = function (pathname, payload) {
     payload = createPayload(pathname, payload)
-    return resolve(payload.searchPath, _routes, _resolvers, payload)
+    return resolve(_routes, payload.searchPath, { resolvers: _resolvers })
   }
 
-  this.execute = function (pathname, payload) {
-    payload = createPayload(pathname, payload)
+  /**
+   * Execute a route with a request object as payload
+   */
+  this.execute = function (pathname, req) {
+    req = createPayload(pathname, req)
 
-    const endpoint = resolve(payload.searchPath, _routes, _resolvers, payload)
-    return execute(endpoint, payload)
+    const endpoint = resolve(_routes, req.searchPath, { resolvers: _resolvers, req: req })
+    return execute(endpoint, req)
   }
 
+  /**
+   * Add a resolver to the stack
+   * before the default ones
+   */
   this.addResolverBefore = function (resolver) {
     if (typeof resolver !== 'function') {
       throw new TypeError('Resolver needs to be a function')
@@ -45,6 +71,10 @@ module.exports = function (routes) {
     _resolvers.unshift(resolver)
   }
 
+  /**
+   * Add a resolver to the stack
+   * after the default ones
+   */
   this.addResolverAfter = function (resolver) {
     if (typeof resolver !== 'function') {
       throw new TypeError('Resolver needs to be a function')
@@ -55,48 +85,42 @@ module.exports = function (routes) {
 
 /**
  * Resolve a path in the object, 
- * will add any path parameters to payload.path
- * @param { Array<String> } path The path to execute
- * @param { Object } obj An object to search for the path in
- * @param { Array<Function> } resolvers
- * @param { Object } payload An object to add parameter data to
+ * will add any path parameters to opts.req.params
+ * 
+ * @param { Object } obj 
+ * @param { String } path The path to execute
+ * @param { Object? } opts 
+ * @returns { Any? }
+ *//**
+ * Resolve a path in the object, 
+ * will add any path parameters to opts.req.params
+ * 
+ * @param { Object } obj 
+ * @param { String } path The path to execute
+ * @param { Object? } opts 
  * @returns { Any? }
  */
-function resolve (path, obj, resolvers, payload = {}) {
-  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
-    throw new TypeError('Invalid object')
-  }
-  const mutablePath = [].concat(path)
+function resolve (obj, path, opts = {}) {
+  opts = defaults(opts, {
+    resolvers: [],
+    delimiter: '/'
+  })
 
-  /**
-   * Loop through each key of the path
-   * and apply filters until a match
-   * is found
-   */
-  for (let i = 0, len = path.length; i < len; i++) {
-    let next
+  if (typeof path === 'string') path = path.split(opts.delimiter)
+  if (path.length === 0) return obj
 
-    for (let resolver of resolvers) {
-      const res = resolver(mutablePath, obj, payload)
-      if (!res) continue
-
-      next = res
-      break
-    }
-
-    if (next === null) return null // 404
-    if (typeof next !== 'object' && i < len - 1) return null // 500
-
-    obj = next
-
-    /**
-     * Keep the mutable path to the
-     * current and upcoming keys
-     */
-    mutablePath.shift()
+  let resolved
+  const _resolve = val => {
+    path.shift()
+    resolved = resolve(val, path, opts)
   }
 
-  return obj
+  for (let resolver of opts.resolvers) {
+    resolver(obj, path, _resolve, opts)
+    if (resolved) break
+  }
+
+  return resolved || obj
 }
 
 /**
@@ -104,7 +128,7 @@ function resolve (path, obj, resolvers, payload = {}) {
  * @param { Function? } endpoint
  * @param { Object? } payload
  */
-function execute (endpoint, payload = {}) {
+function execute (endpoint, req = {}) {
   return new Promise (resolve => {
     // 404
     if (endpoint === null) {
@@ -116,6 +140,6 @@ function execute (endpoint, payload = {}) {
       throw new HTTPError(500)
     }
 
-    resolve(endpoint(payload))
+    resolve(endpoint(req))
   })
 }
