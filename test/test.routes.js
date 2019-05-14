@@ -20,13 +20,24 @@ module.exports = {
       'patch': req => { return Promise.resolve('patch') }
     }
   },
+
+  /**
+   * Error routes
+   */
   '/error': {
     '/500': {
       'get': false
     }
   },
+
+  /**
+   * Dumb route, returns with the request-object
+   */
   '/req': {
-    'get': req => { return Promise.resolve(req) }
+    'get': req => { return Promise.resolve(req) },
+    '/req': {
+      'get': req => { return Promise.resolve(req) }
+    }
   },
 
   /**
