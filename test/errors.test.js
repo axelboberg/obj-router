@@ -7,6 +7,6 @@ test('execute a failing route (404)', async () => {
   await expect(router.execute('/error/404')).rejects
 })
 
-test('execute a failing route (500)', async () => {
+test('execute a route that is not a function', async () => {
   await expect(router.execute('/error/500')).rejects
 })
