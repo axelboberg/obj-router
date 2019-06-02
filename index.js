@@ -18,7 +18,13 @@ module.exports = function (routes) {
     throw new TypeError('Routes must be a non-array object')
   }
 
-  let _routes = routes
+  let _routes = routes || {}
+
+  /**
+   * Allow the routes to be modified
+   * after the creation of the router
+   */
+  this.routes = _routes
 
   /**
    * Make copy of resolvers in order
