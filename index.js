@@ -2,7 +2,7 @@
  * Axel Boberg © 2019
  */
 
-const HTTPError = require('./lib/error/http')
+const HttpError = require('./lib/error/http')
 
 const objects = require('./lib/objects')
 const url = require('./lib/url')
@@ -13,7 +13,7 @@ function defaults (target, definition) {
   return Object.assign(mirror, target)
 }
 
-module.exports = function (routes) {
+function Router (routes) {
   if (typeof routes !== 'object' || Array.isArray(routes)) {
     throw new TypeError('Routes must be a non-array object')
   }
@@ -137,14 +137,16 @@ function execute (endpoint, req = {}, ...args) {
   return new Promise (resolve => {
     // 404
     if (endpoint === null) {
-      throw new HTTPError(404)
+      throw new HttpError(404)
     }
 
-    // 500
     if (typeof endpoint !== 'function') {
-      throw new HTTPError(500)
+      throw new TypeError(`Endpoint is not a function`)
     }
 
     resolve(endpoint(req, ...args))
   })
 }
+
+module.exports = Router
+module.exports.HttpError = HttpError
