@@ -4,6 +4,7 @@ A lightweight router based on objects for NodeJS Promises. For small web service
 ## Note  
 **This update contains the following breaking changes from version 2.x.x:**
 - HttpError.code is now HttpError.status
+- HttpError.msg is now removed, use HttpError.message instead
 - router.execute() now returns a TypeError instead of an HttpError if an endpoint is not a function
 
 ## Example
