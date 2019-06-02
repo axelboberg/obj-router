@@ -2,7 +2,9 @@
 A lightweight router based on objects for NodeJS Promises. For small web services.
 
 ## Note  
-**This update contains breaking changes**
+**This update contains the following breaking changes from version 2.x.x:**
+- HttpError.code is now HttpError.status
+- router.execute() now returns a TypeError instead of an HttpError if an endpoint is not a function
 
 ## Example
 
@@ -14,9 +16,7 @@ const req = {
 	surname: 'Appleseed'
 }
 const message = await router.execute('/hello/mr?name=John', req)
-
 // `message` = 'Hello mr. John Appleseed!'
-
 ```
 
 hello.routes.js
@@ -57,12 +57,12 @@ Each endpoint should be a key-value pair of a method name and a function returni
 The following methods will be resolved:
 
 ```
-  get
-  head
-  post
-  put
-  delete
-  patch
+get
+head
+post
+put
+delete
+patch
 ```
 
 ---
@@ -74,6 +74,9 @@ Execute a path, returns a promise
 
 ### `.resolve(path, req?)`
 Resolve a path, returns null or a value
+
+### `.routes`  
+The routes object passed to the constructor
 
 ---
 
@@ -101,16 +104,16 @@ Resolvers are always executed synchronously in order until an object is returned
 A resolver should have the following signature:
 
 ```javascript
-  function resolver (obj, path, opts, resolve)  {
-    // `obj` is the object to be resolved
-    // `path` represents the path to resolve as an array of strings, path[0] is the key currently being resolved
-    // `resolve` is a callback function that takes the resolved object as its first argument, a path as its second and options as its third. If this function isn't called the next resolver will be called with the same arguments.
-    // `opts` contains payload data for the operation. opts.req represents the request object.
+function resolver (obj, path, opts, resolve)  {
+  // `obj` is the object to be resolved
+  // `path` represents the path to resolve as an array of strings, path[0] is the key currently being resolved
+  // `resolve` is a callback function that takes the resolved object as its first argument, a path as its second and options as its third. If this function isn't called the next resolver will be called with the same arguments.
+  // `opts` contains payload data for the operation. opts.req represents the request object.
 
-    // Must call resolve with at least its first argument
-    // if route is to be resolved by this resolver
-    // resolve(obj, path, opts)
-  }
+  // Must call resolve with at least its first argument
+  // if route is to be resolved by this resolver
+  // resolve(obj, path, opts)
+}
 ```
 
 #### `.addResolverBefore(resolver)`
@@ -118,5 +121,32 @@ Prepends a resolver to the stack of resolvers
 
 #### `.addResolverAfter(resolver)`
 Appends a resolver to the stack of resolvers
+
+---
+
+### Errors  
+
+Errors connected to an HTTP status code are encapsulated in the `HttpError` class.
+
+```javascript
+const HttpError = require('obj-router').HttpError
+
+const notFound = new HttpError(404)
+// notFound.status = 404
+// notFound.message = 'Not Found'
+```
+
+#### `new HttpError(status [,message])`  
+Create a new HttpError.
+
+#### `.status`  
+A public property containing the HTTP status code representing the error.
+
+#### `.message`  
+A public property containing a message describing the error.
+If no message was provided to the constructor a default one will be set based on the status code.
+
+#### `HttpError.status`  
+A static gettable property returning an object with all available status codes,
 
 ## [License](LICENSE)
