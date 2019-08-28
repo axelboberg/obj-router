@@ -42,7 +42,11 @@ function Router (routes) {
     payload = objects.payload.ensure(payload)
 
     const info = url.info(path)
-    Object.assign(payload, info)
+
+    // Assign the url info to the payload object
+    payload.path = info.path
+    payload.pathname = info.pathname
+    payload.query = Object.assign(payload.query || {}, info.query)
 
     payload.searchPath = payload.path.concat([ payload.method ])
     return payload
